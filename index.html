@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>MYCAS Central Library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --ink: #0f1c2e;
+      --ink-mid: #1a2f45;
+      --gold: #c9a84c;
+      --gold-light: #e8c96a;
+      --gold-pale: #f5e9c8;
+      --cream: #faf7f2;
+      --cream-deep: #f0ebe0;
+      --slate: #4a6070;
+      --slate-light: #7a95a8;
+      --white: #ffffff;
+      --border: rgba(201,168,76,0.25);
+      --shadow-ink: 0 20px 60px rgba(15,28,46,0.25);
+      --shadow-gold: 0 8px 32px rgba(201,168,76,0.2);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ─── SPLASH ─── */
+    .splash {
+      position: fixed; inset: 0;
+      background: var(--ink);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.8s ease;
+    }
+    .splash-ring {
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 28px;
+      box-shadow: 0 0 0 8px rgba(201,168,76,0.08), 0 0 0 20px rgba(201,168,76,0.04);
+      animation: ringPulse 2s ease-in-out infinite alternate;
+      overflow: hidden;
+    }
+    .splash-ring img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    @keyframes ringPulse {
+      from { box-shadow: 0 0 0 8px rgba(201,168,76,0.08), 0 0 0 20px rgba(201,168,76,0.04); }
+      to { box-shadow: 0 0 0 12px rgba(201,168,76,0.15), 0 0 0 28px rgba(201,168,76,0.06); }
+    }
+    .splash-rule {
+      width: 48px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 0 auto 20px;
+    }
+    .splash h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--white); font-size: 1.8rem; font-weight: 700;
+      letter-spacing: 0.04em; text-align: center;
+      animation: fadeUp 1s ease 0.3s both;
+    }
+    .splash p {
+      color: var(--gold); font-size: 0.72rem;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      margin-top: 10px; text-align: center;
+      animation: fadeUp 1s ease 0.5s both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .loading-dots { display: flex; gap: 8px; margin-top: 32px; justify-content: center; }
+    .loading-dots span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--gold); opacity: 0.3;
+      animation: dot 1.4s ease-in-out infinite;
+    }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dot { 0%,80%,100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1.2); } }
+
+    /* ─── MAIN CONTENT ─── */
+    .main-content { display: none; opacity: 0; transition: opacity 0.6s; }
+    .main-content.visible { display: block; opacity: 1; }
+
+    /* ─── HEADER ─── */
+    .library-header {
+      background: var(--ink);
+      padding: 0;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 4px 30px rgba(15,28,46,0.4);
+    }
+    .header-top-bar {
+      background: var(--gold);
+      text-align: center;
+      padding: 6px 2rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink);
+      font-weight: 600;
+    }
+    .header-inner {
+      display: flex; align-items: center; gap: 1.4rem;
+      padding: 1rem 2.5rem;
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+    .header-logo-wrap {
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      padding: 3px;
+      flex-shrink: 0;
+    }
+    .header-logo-wrap img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+    .header-title { flex: 1; }
+    .header-eyebrow {
+      font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--gold); font-weight: 600; margin-bottom: 3px;
+    }
+    .header-name {
+      font-family: 'Playfair Display', serif;
+      color: var(--white); font-size: 1.5rem; font-weight: 700;
+      line-height: 1.1;
+    }
+    .header-subtitle {
+      font-size: 0.68rem; color: var(--slate-light);
+      letter-spacing: 0.08em; margin-top: 3px;
+      text-transform: uppercase;
+    }
+    .header-badge {
+      background: rgba(201,168,76,0.12);
+      border: 1px solid var(--border);
+      border-radius: 32px;
+      padding: 8px 18px;
+      color: var(--gold-light);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .header-badge .dot {
+      width: 7px; height: 7px;
+      background: var(--gold); border-radius: 50%;
+      animation: dot 2s ease-in-out infinite;
+    }
+
+    /* ─── HERO BAND ─── */
+    .hero-band {
+      background: linear-gradient(135deg, var(--ink-mid) 0%, #0d2438 100%);
+      padding: 3.5rem 2.5rem;
+      position: relative; overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-band::before {
+      content: '"';
+      font-family: 'Playfair Display', serif;
+      font-size: 28rem; color: rgba(201,168,76,0.04);
+      position: absolute; right: -4rem; top: -8rem;
+      line-height: 1; pointer-events: none; user-select: none;
+    }
+    .hero-grid { display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: center; }
+    .hero-kicker {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(201,168,76,0.12);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 4px;
+      padding: 6px 14px;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+    .hero-kicker::before { content: ''; width: 20px; height: 1px; background: var(--gold); }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--white);
+      line-height: 1.15;
+      font-weight: 700;
+    }
+    .hero-title em { color: var(--gold); font-style: italic; }
+    .hero-desc {
+      color: var(--slate-light);
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      max-width: 480px;
+    }
+    .hero-stats {
+      display: flex; gap: 2.5rem; margin-top: 2rem;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem; font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.65rem; color: var(--slate-light);
+      letter-spacing: 0.12em; text-transform: uppercase; margin-top: 4px;
+    }
+    .hero-decoration {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+    }
+    .spine {
+      width: 32px; border-radius: 4px;
+      background: linear-gradient(180deg, var(--gold) 0%, #8a6a20 100%);
+      box-shadow: 3px 3px 8px rgba(0,0,0,0.4);
+    }
+
+    /* ─── FILTER SECTION ─── */
+    .filter-section { padding: 2rem 2.5rem; background: var(--cream); }
+    .filter-card {
+      background: var(--white);
+      border: 1px solid rgba(15,28,46,0.1);
+      border-top: 4px solid var(--gold);
+      border-radius: 4px 4px 12px 12px;
+      padding: 2rem 2.5rem;
+      box-shadow: var(--shadow-ink);
+    }
+    .filter-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--ink); margin-bottom: 1.6rem;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .filter-heading::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, rgba(15,28,46,0.12), transparent);
+    }
+    .filter-row {
+      display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: flex-end;
+    }
+    .filter-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 180px; }
+    .filter-label {
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--slate);
+    }
+    .filter-select {
+      appearance: none;
+      background: var(--cream) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M6 8L0 0h12z' fill='%234a6070'/%3E%3C/svg%3E") no-repeat right 14px center;
+      border: 1.5px solid rgba(15,28,46,0.15);
+      border-radius: 6px;
+      padding: 11px 36px 11px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      color: var(--ink);
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .filter-select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+    .filter-select:disabled { opacity: 0.5; cursor: not-allowed; }
+    .go-btn {
+      background: var(--ink);
+      color: var(--gold);
+      border: none;
+      border-radius: 6px;
+      padding: 11px 32px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 10px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      white-space: nowrap;
+    }
+    .go-btn:hover { background: #0d2438; transform: translateY(-1px); box-shadow: var(--shadow-gold); }
+    .go-btn:active { transform: translateY(0); }
+    .go-btn i { font-size: 0.8rem; }
+
+    /* ─── BOOKS SECTION ─── */
+    .books-section { padding: 0 2.5rem 4rem; }
+    .section-header {
+      display: flex; align-items: baseline; gap: 1.5rem;
+      margin-bottom: 2rem; padding-top: 1rem;
+      border-top: 1px solid rgba(15,28,46,0.08);
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; font-weight: 700;
+      color: var(--ink);
+    }
+    .book-count {
+      font-size: 0.72rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--slate-light);
+    }
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+
+    /* ─── BOOK CARD ─── */
+    .book-card {
+      background: var(--white);
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: 0 4px 16px rgba(15,28,46,0.08);
+      border: 1px solid rgba(15,28,46,0.07);
+      position: relative;
+    }
+    .book-card::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--gold);
+      transform: scaleY(0);
+      transition: transform 0.3s ease;
+      transform-origin: bottom;
+    }
+    .book-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(15,28,46,0.15); }
+    .book-card:hover::before { transform: scaleY(1); }
+    .book-cover {
+      background: var(--cream-deep);
+      padding: 2rem 1.2rem 1.2rem;
+      display: flex; justify-content: center;
+      position: relative;
+      min-height: 220px;
+    }
+    .book-cover::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 30px;
+      background: linear-gradient(transparent, rgba(240,235,224,0.8));
+    }
+    .book-cover img {
+      width: 120px; height: 165px;
+      object-fit: cover;
+      border-radius: 2px 8px 8px 2px;
+      box-shadow: 6px 6px 20px rgba(15,28,46,0.25), -2px 0 6px rgba(15,28,46,0.1);
+    }
+    .book-info { padding: 1.1rem 1rem 1.2rem; }
+    .book-subject-tag {
+      display: inline-block;
+      background: rgba(201,168,76,0.1);
+      border: 1px solid rgba(201,168,76,0.3);
+      color: #8a6a20;
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 3px;
+      margin-bottom: 7px;
+    }
+    .book-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem; font-weight: 700;
+      color: var(--ink); line-height: 1.3;
+      margin-bottom: 5px;
+    }
+    .book-author {
+      font-size: 0.72rem; color: var(--slate-light);
+      font-style: italic;
+    }
+    .book-card-footer {
+      padding: 0.7rem 1rem;
+      border-top: 1px solid rgba(15,28,46,0.06);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .preview-label {
+      font-size: 0.65rem; color: var(--gold);
+      letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;
+    }
+    .preview-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--ink); color: var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem;
+    }
+
+    /* ─── EMPTY / ERROR STATE ─── */
+    .empty-state {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 4rem 2rem;
+      border: 1px dashed rgba(201,168,76,0.4);
+      border-radius: 12px;
+      background: rgba(201,168,76,0.04);
+    }
+    .empty-icon {
+      font-size: 3rem; margin-bottom: 1rem;
+      color: var(--gold); opacity: 0.5;
+    }
+    .empty-state h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; color: var(--ink); margin-bottom: 0.5rem;
+    }
+    .empty-state p { font-size: 0.85rem; color: var(--slate-light); line-height: 1.7; }
+
+    /* ─── FLIPBOOK MODAL ─── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(6, 12, 22, 0.96);
+      backdrop-filter: blur(20px);
+      display: flex; align-items: center; justify-content: center;
+      visibility: hidden; opacity: 0;
+      transition: all 0.35s ease;
+      z-index: 10000;
+      padding: 1rem;
+    }
+    .modal-overlay.active { visibility: visible; opacity: 1; }
+    .flipbook-container {
+      background: #111d2b;
+      border: 1px solid rgba(201,168,76,0.18);
+      width: 100%; max-width: 780px;
+      border-radius: 20px;
+      padding: 1.6rem 1.8rem 1.4rem;
+      box-shadow: 0 50px 100px rgba(0,0,0,0.7);
+      transform: scale(0.96) translateY(16px);
+      transition: transform 0.35s cubic-bezier(0.34,1.3,0.64,1);
+    }
+    .modal-overlay.active .flipbook-container { transform: scale(1) translateY(0); }
+    .flipbook-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 1.2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+    }
+    .flipbook-title {
+      font-family: 'Playfair Display', serif;
+      color: var(--white); font-size: 1.1rem;
+    }
+    .flipbook-subtitle { color: var(--gold); font-size: 0.72rem; margin-top: 4px; letter-spacing: 0.08em; }
+    .close-btn {
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+      width: 36px; height: 36px; border-radius: 50%;
+      color: var(--white); cursor: pointer; font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .close-btn:hover { background: rgba(255,255,255,0.15); }
+
+    /* ── THE BOOK STAGE ── */
+    .book-stage {
+      display: flex; align-items: center; justify-content: center;
+      gap: 1.2rem;
+      padding: 0.5rem 0 1rem;
+    }
+    .nav-arrow {
+      background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.22);
+      color: var(--gold-light); width: 42px; height: 42px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 0.95rem;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      flex-shrink: 0; user-select: none;
+    }
+    .nav-arrow:hover { background: rgba(201,168,76,0.22); box-shadow: 0 0 16px rgba(201,168,76,0.2); }
+    .nav-arrow:active { transform: scale(0.92); }
+    .nav-arrow:disabled { opacity: 0.25; cursor: default; }
+
+    /* ── 3D FLIP WRAPPER ── */
+    .flip-scene {
+      perspective: 1400px;
+      width: 300px; height: 420px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    /* shadow on the table */
+    .flip-scene::after {
+      content: '';
+      position: absolute; bottom: -18px; left: 10%; right: 10%;
+      height: 20px;
+      background: radial-gradient(ellipse, rgba(0,0,0,0.55) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    /* The book spine / back stack illusion */
+    .book-stack {
+      position: absolute; inset: 0;
+      border-radius: 3px 10px 10px 3px;
+      overflow: hidden;
+    }
+    .book-stack-inner {
+      width: 100%; height: 100%;
+      background: #e8dcc8;
+      border-radius: 3px 10px 10px 3px;
+      box-shadow: inset -6px 0 14px rgba(0,0,0,0.2);
+    }
+    .book-stack-inner img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 3px 10px 10px 3px;
+      display: block;
+    }
+
+    /* Spine strip (left edge) */
+    .spine-strip {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 14px;
+      background: linear-gradient(90deg, #7a5c28 0%, #c9a84c 40%, #a07830 100%);
+      border-radius: 3px 0 0 3px;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.4);
+      z-index: 2;
+    }
+
+    /* Flipping leaf */
+    .page-leaf {
+      position: absolute; inset: 0;
+      transform-style: preserve-3d;
+      transform-origin: left center;
+      transform: rotateY(0deg);
+      transition: transform 0.72s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+      border-radius: 3px 10px 10px 3px;
+      z-index: 10;
+    }
+    .page-leaf.turning-forward {
+      transition: transform 0.72s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+    }
+    .page-leaf.turning-back {
+      transition: transform 0.72s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+    }
+    /* Front face */
+    .page-front, .page-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 3px 10px 10px 3px;
+      overflow: hidden;
+    }
+    .page-front { background: #e8dcc8; }
+    .page-back {
+      background: #e8dcc8;
+      transform: rotateY(180deg);
+    }
+    .page-front img, .page-back img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      border-radius: 3px 10px 10px 3px;
+    }
+
+    /* Page curl shadow overlay on front face */
+    .page-front::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(0,0,0,0.18) 0%, transparent 18%);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+    /* Spine shadow on back face */
+    .page-back::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0; width: 22px;
+      background: linear-gradient(to right, rgba(0,0,0,0.25), transparent);
+      z-index: 1; pointer-events: none;
+    }
+
+    /* ── PAGE INDICATOR ── */
+    .page-indicator {
+      text-align: center; margin-top: 0.3rem;
+      color: var(--slate-light); font-size: 0.78rem;
+      display: flex; align-items: center; justify-content: center; gap: 14px;
+    }
+    .page-dots { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; max-width: 200px; }
+    .page-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(201,168,76,0.25);
+      transition: background 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    .page-dot.active { background: var(--gold); transform: scale(1.5); }
+
+    /* hint text */
+    .flip-hint {
+      text-align: center; margin-top: 0.5rem;
+      font-size: 0.65rem; color: rgba(122,149,168,0.55);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      background: var(--ink);
+      padding: 3rem 2.5rem 2rem;
+      border-top: 1px solid rgba(201,168,76,0.2);
+    }
+    .footer-inner {
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 2rem; align-items: start;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 1.5rem;
+    }
+    .footer-brand h3 {
+      font-family: 'Playfair Display', serif;
+      color: var(--white); font-size: 1.3rem; margin-bottom: 6px;
+    }
+    .footer-brand p { color: var(--slate-light); font-size: 0.8rem; line-height: 1.7; max-width: 320px; }
+    .footer-socials { display: flex; gap: 12px; }
+    .social-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--slate-light);
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none; font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .social-btn:hover { background: rgba(201,168,76,0.15); border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-copy { color: var(--slate-light); font-size: 0.75rem; }
+    .footer-link { color: var(--gold); text-decoration: none; font-size: 0.75rem; }
+    .footer-link:hover { text-decoration: underline; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 700px) {
+      .header-inner { padding: 0.8rem 1.2rem; }
+      .header-badge { display: none; }
+      .hero-band { padding: 2rem 1.2rem; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-decoration { display: none; }
+      .hero-stats { gap: 1.5rem; }
+      .filter-section { padding: 1.2rem; }
+      .filter-card { padding: 1.5rem; }
+      .books-section { padding: 0 1.2rem 3rem; }
+      .footer { padding: 2rem 1.2rem; }
+      .footer-inner { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .flip-scene { width: 220px; height: 308px; }
+      .flipbook-container { padding: 1.2rem; }
+      .nav-arrow { width: 36px; height: 36px; font-size: 0.8rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash" class="splash">
+  <div class="splash-ring">
+    <img src="logo.jpg" alt="MYCAS Logo">
+  </div>
+  <div class="splash-rule"></div>
+  <h2>MYCAS Central Library</h2>
+  <p>Empowering Knowledge, Inspiring Excellence</p>
+  <div class="loading-dots">
+    <span></span><span></span><span></span>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="main-content">
+
+  <!-- HEADER -->
+  <header class="library-header">
+    <div class="header-top-bar">
+      Mysore Institute of Commerce, Arts &amp; Science — Central Library
+    </div>
+    <div class="header-inner">
+      <div class="header-logo-wrap">
+        <img src="logo.jpg" alt="MYCAS Logo">
+      </div>
+      <div class="header-title">
+        <div class="header-eyebrow">Est. Library Portal</div>
+        <div class="header-name">MYCAS Library</div>
+        <div class="header-subtitle">Smart Book Recommender</div>
+      </div>
+      <div class="header-badge">
+        <span class="dot"></span>
+        Open · Resource Hub
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero-band">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-kicker">Academic Book Finder</div>
+        <h1 class="hero-title">
+          Find the right books<br>for your <em>course</em>
+        </h1>
+        <p class="hero-desc">
+          Select your program, semester, and subject to discover curated books and preview them page by page — right here in the library portal.
+        </p>
+        <div class="hero-stats">
+          <div class="stat">
+            <div class="stat-num">8+</div>
+            <div class="stat-label">Programs</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">6</div>
+            <div class="stat-label">Semesters</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">∞</div>
+            <div class="stat-label">Pages to Explore</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-decoration" aria-hidden="true">
+        <div class="spine" style="height: 90px; opacity: 0.9;"></div>
+        <div class="spine" style="height: 70px; background: linear-gradient(180deg, #8a6a20, #5a4410); opacity: 0.6;"></div>
+        <div class="spine" style="height: 110px; opacity: 0.75;"></div>
+        <div class="spine" style="height: 60px; background: linear-gradient(180deg, #6b8f6e, #3d5e40); opacity: 0.5;"></div>
+        <div class="spine" style="height: 85px; background: linear-gradient(180deg, #7a6090, #4a3a60); opacity: 0.55;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILTER -->
+  <section class="filter-section">
+    <div class="filter-card">
+      <div class="filter-heading">
+        <i class="fas fa-sliders-h" style="color:var(--gold); font-size:0.9rem;"></i>
+        Select Your Course
+      </div>
+      <div class="filter-row">
+        <div class="filter-group">
+          <label class="filter-label">Program</label>
+          <select id="programSelect" class="filter-select">
+            <option value="">Choose program…</option>
+            <option value="I PUC Commerce">I PUC Commerce</option>
+            <option value="II PUC Commerce">II PUC Commerce</option>
+            <option value="I PUC Science">I PUC Science</option>
+            <option value="II PUC Science">II PUC Science</option>
+            <option value="BCom">BCom</option>
+            <option value="BCA">BCA</option>
+            <option value="BBA">BBA</option>
+            <option value="BCom FM">BCom FM</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Year / Semester</label>
+          <select id="semesterSelect" class="filter-select" disabled>
+            <option value="">Select program first…</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Subject</label>
+          <select id="subjectSelect" class="filter-select" disabled>
+            <option value="">Select year first…</option>
+          </select>
+        </div>
+        <button class="go-btn" id="goBtn">
+          <i class="fas fa-book-open"></i>
+          Show Books
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKS -->
+  <section class="books-section">
+    <div class="section-header">
+      <h2 class="section-title">Recommended Books</h2>
+      <span class="book-count" id="bookCount"></span>
+    </div>
+    <div id="booksGrid" class="books-grid">
+      <div class="empty-state">
+        <div class="empty-icon"><i class="fas fa-books"></i></div>
+        <h3>Select a course above</h3>
+        <p>Choose your program, year/semester, and subject,<br>then click <strong>Show Books</strong> to see recommendations.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h3>MYCAS Library</h3>
+        <p>Central Library, Mysore Institute of Commerce, Arts &amp; Science. Empowering students with curated academic resources since establishment.</p>
+      </div>
+      <div class="footer-socials">
+        <a href="https://instagram.com/yourcollege" id="instaLink" target="_blank" class="social-btn" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://facebook.com/yourcollege" id="fbLink" target="_blank" class="social-btn" aria-label="Facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://linkedin.com/school/yourcollege" id="linkedinLink" target="_blank" class="social-btn" aria-label="LinkedIn">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2025 MYCAS Central Library. All rights reserved.</p>
+      <a href="#" id="devLink" class="footer-link">Developer Info</a>
+    </div>
+  </footer>
+</div>
+
+<!-- FLIPBOOK MODAL -->
+<div id="flipbookModal" class="modal-overlay">
+  <div class="flipbook-container">
+    <div class="flipbook-header">
+      <div>
+        <div class="flipbook-title" id="modalBookTitle">Book Preview</div>
+        <div class="flipbook-subtitle" id="modalBookSub"></div>
+      </div>
+      <button class="close-btn" id="closeFlipBtn" aria-label="Close"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="book-stage">
+      <button class="nav-arrow" id="prevImgBtn" aria-label="Previous page">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <!-- 3D Flip Scene -->
+      <div class="flip-scene" id="flipScene">
+        <!-- Back page (shown behind during flip) -->
+        <div class="book-stack" id="bookStack">
+          <div class="book-stack-inner">
+            <img id="stackImg" src="" alt="">
+          </div>
+        </div>
+        <!-- Spine strip -->
+        <div class="spine-strip"></div>
+        <!-- The turning leaf -->
+        <div class="page-leaf" id="pageLeaf">
+          <div class="page-front">
+            <img id="frontImg" src="" alt="Book page">
+          </div>
+          <div class="page-back">
+            <img id="backImg" src="" alt="Next page">
+          </div>
+        </div>
+      </div>
+
+      <button class="nav-arrow" id="nextImgBtn" aria-label="Next page">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <div class="page-indicator">
+      <span id="pageIndicator">Page 1</span>
+      <div class="page-dots" id="pageDots"></div>
+    </div>
+    <div class="flip-hint">← → arrow keys or swipe to turn pages</div>
+  </div>
+</div>
+
+<script>
+  // ── SUBJECT MAP ──────────────────────────────────────────────
+  const subjectMap = {
+    "I PUC Commerce_1": ["Kannada","English","Economics","Business Studies","Accountancy","Computer Science"],
+    "II PUC Commerce_2": ["Kannada","English","Economics","Business Studies","Accountancy","Computer Science"],
+    "I PUC Science_1": ["Kannada","English","Physics","Chemistry","Mathematics","Biology","Computer Science"],
+    "II PUC Science_2": ["Kannada","English","Physics","Chemistry","Mathematics","Biology","Computer Science"],
+    "BCom_1": ["FUNDAMENTALS OF FINANCIAL ACCOUNTING","BUSINESS MATHEMATICS","BANKING LAW AND PRACTICE","KANNADA","ENGLISH","CONSTITUTIONAL VALUE"],
+    "BCom_2": ["ADVANCED FINANCIAL ACCOUNTING","FUNDAMENTALS OF COS ACCOUNTING","COMPANY LAW AND PRACTICE","KANNADA","ENGLISH","CONSTITUTIONAL VALUE"],
+    "BCom_3": ["FUNDAMENTALS CORPORATE ACCOUNTING OF","INCOME TAX LAW & PRACTICE - I","ADVANCED ACCOUNTING","COST","ELECTIVE","ELECTIVE"],
+    "BCom_4": ["ADVANCED CORPORATE ACCOUNTING","INCOME TAX LAW & PRACTICE - II","BUSINESS STATSTICS","ELECTIVE","ENTREPRENEURSHIP DEVELOPMENT"],
+    "BCom_5": ["Business Law","Human Resource Management","Business Analysis","Corporate Finance","Assessment of Persons Other than Individuals","Indian Accounting Standards-I","Small Business Management","Business Communication Skills"],
+    "BCom_6": ["Auditing","Marketing Management","Management Accounting","Advanced Corporate Finance","Goods and Services Tax","Indian Accounting Standards-II","Women and Social Entrepreneurship","Startup Eco-System Skills"],
+    "BCA_1": ["Digital Computer Organization","Office Automation and HTML","Problem Solving using C++","C++ Programming","Mathematical and Statistical Computing","Mathematical and Statistical Computing using R"],
+    "BCA_2": ["Data Structures","Data Structures using C++","Object Oriented Programming with Java","Programming with Java","Operating Systems","Shell Programming"],
+    "BCA_3": ["C#.NET Programming","C#.NET Programming Lab","Data Base Management System","DBMS Lab","Web Technologies","Web Technologies Lab","Cyber Security","Software Engineering","System Software","Cloud Computing","Digital Image Processing","E-Commerce and E-Governance"],
+    "BCA_4": ["Computer Networks","Networking Lab","Python Programming","Python Programming Lab","PHP & MySQL","PHP & MySQL Lab","Fundamentals of Data Science","Internet of things","Software Testing","Digital Marketing"],
+    "BCA_5": ["Advanced Web Technologies","Data Mining","Big Data Analytics","Mobile App Development","Software Testing","Cloud Computing"],
+    "BCA_6": ["Machine Learning","Artificial Intelligence","Cyber Security","Project Work","Internship","Elective"],
+    "BBA_1": ["Language-I","Language-II","Principles & Practices of Management","Fundamentals of Business Accounting","Business Economics","Business Communication","Constitutional Values"],
+    "BBA_2": ["Language-I","Language-II","Organizational Behaviour","Financial Accounting and Reporting","Business Statistics","Marketing Management","Constitutional Values"],
+    "BBA_3": ["Language-I","Language-II","Cost Accounting","Business Statistics II","Business Environment","Entrepreneurship and Startup Ecosystem","Banking and Financial Services","Digital Marketing"],
+    "BBA_4": ["Language-I","Language-II","Financial Management","Human Resource Management","Management Accounting","Logistics and Supply Chain Management","Business Analytics","Information Technology For Business"],
+    "BBA_5": ["Production and Operations Management","Business Research Methods","Income Tax","Specialization I","Specialization I","E-Commerce","Digital Tools for Business Decisions","ERP and CRM","Advance Excel for Business"],
+    "BBA_6": ["Strategic Management","Legal Framework for Business","Goods and Services Tax","Specialization II","Specialization II","Project Report"],
+    "BCom FM_1": ["English","Kannada/French","Fundamentals of Accounting","Principles of Management","Business Mathematics","Monetary Economics","Yoga","Indian Banking Systems"],
+    "BCom FM_2": ["English","Kannada/French","Financial Accounting","Logical Reasoning","Environmental Studies","Indian Financial System","Current affairs","IT for Managers"],
+    "BCom FM_3": ["English","Kannada/French","Cost Accounting","Marketing Management","Introduction to Financial Management","Industrial and Organizational Psychology","Artificial Intelligence and Business Intelligence","Introduction to Financial Markets"],
+    "BCom FM_4": ["English","Kannada/French","Management Accounting","Financial Decision","Human Resource Management","Constitution of India","Introduction to Business and Commercial Law","Basics of Securities Market"],
+    "BCom FM_5": ["Advanced Accounting-I","Business Statistics","Introduction to Entrepreneurship","Research Methodology-1","Direct Tax-I","Fundamentals of FinTech and Digital marketing Analytics","Fundamentals of Mutual Funds"],
+    "BCom FM_6": ["Advanced Accounting-II","Startup Eco System","Portfolio/Security Analysis","Research Methodology-II","Derivatives","Direct Tax-II","Introduction to R","Tally"]
+  };
+
+  // ── DROPDOWNS ─────────────────────────────────────────────────
+  const programSelect = document.getElementById("programSelect");
+  const semesterSelect = document.getElementById("semesterSelect");
+  const subjectSelect = document.getElementById("subjectSelect");
+
+  function addOption(sel, val, txt) {
+    const o = document.createElement("option");
+    o.value = val; o.textContent = txt;
+    sel.appendChild(o);
+  }
+
+  function updateSemesterOptions() {
+    const prog = programSelect.value;
+    semesterSelect.innerHTML = '<option value="">Choose year/semester…</option>';
+    subjectSelect.innerHTML = '<option value="">Select year first…</option>';
+    subjectSelect.disabled = true;
+    if (!prog) { semesterSelect.disabled = true; return; }
+    semesterSelect.disabled = false;
+    if (prog.includes("PUC")) {
+      if (prog.startsWith("I PUC")) addOption(semesterSelect, "1", "1st Year");
+      else addOption(semesterSelect, "2", "2nd Year");
+    } else {
+      for (let i = 1; i <= 6; i++) addOption(semesterSelect, i, `Semester ${i}`);
+    }
+  }
+
+  function updateSubjects() {
+    const prog = programSelect.value;
+    const sem = semesterSelect.value;
+    subjectSelect.innerHTML = '<option value="">Choose subject…</option>';
+    subjectSelect.disabled = true;
+    if (!prog || !sem) return;
+    const subjects = subjectMap[`${prog}_${sem}`] || ["General", "Elective"];
+    subjects.forEach(s => addOption(subjectSelect, s, s));
+    subjectSelect.disabled = false;
+  }
+
+  programSelect.addEventListener("change", () => { updateSemesterOptions(); updateSubjects(); });
+  semesterSelect.addEventListener("change", updateSubjects);
+  updateSemesterOptions();
+
+  // ── LOAD BOOKS ────────────────────────────────────────────────
+  let booksDB = [];
+  async function loadBooks() {
+    try {
+      const r = await fetch('books.json');
+      if (!r.ok) throw new Error('books.json not found');
+      booksDB = await r.json();
+    } catch (e) {
+      console.warn('books.json not loaded:', e.message);
+    }
+  }
+
+  // ── RENDER BOOKS ──────────────────────────────────────────────
+  function renderBooks() {
+    const prog = programSelect.value;
+    const sem = semesterSelect.value;
+    const subj = subjectSelect.value;
+    const grid = document.getElementById("booksGrid");
+    const countEl = document.getElementById("bookCount");
+
+    if (!prog || !sem || !subj) {
+      grid.innerHTML = `<div class="empty-state">
+        <div class="empty-icon"><i class="fas fa-hand-point-up"></i></div>
+        <h3>Almost there</h3>
+        <p>Please complete all three dropdowns above<br>and click <strong>Show Books</strong>.</p>
+      </div>`;
+      countEl.textContent = '';
+      return;
+    }
+
+    const filtered = booksDB.filter(b =>
+      b.program === prog && String(b.semester) === sem && b.subject === subj
+    );
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div class="empty-state">
+        <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+        <h3>No books found</h3>
+        <p>No entries yet for <strong>${prog} · Sem ${sem} · ${subj}</strong>.<br>Add entries in <code>books.json</code> to populate this view.</p>
+      </div>`;
+      countEl.textContent = '';
+      return;
+    }
+
+    countEl.textContent = `${filtered.length} book${filtered.length !== 1 ? 's' : ''} found`;
+    grid.innerHTML = '';
+    filtered.forEach(book => {
+      const coverImg = (book.pages && book.pages.length)
+        ? book.pages[0]
+        : `https://placehold.co/160x210/f0ebe0/4a6070?text=${encodeURIComponent(book.title?.charAt(0) || 'B')}`;
+
+      const card = document.createElement("div");
+      card.className = "book-card";
+      card.innerHTML = `
+        <div class="book-cover">
+          <img src="${coverImg}" alt="${book.title}" loading="lazy">
+        </div>
+        <div class="book-info">
+          <span class="book-subject-tag">${book.subject || subj}</span>
+          <div class="book-title">${book.title}</div>
+          <div class="book-author">${book.author}</div>
+        </div>
+        <div class="book-card-footer">
+          <span class="preview-label">Preview pages</span>
+          <span class="preview-icon"><i class="fas fa-eye"></i></span>
+        </div>
+      `;
+      card.addEventListener("click", () => openFlipbook(book));
+      grid.appendChild(card);
+    });
+
+    // scroll to books
+    document.querySelector('.books-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  document.getElementById("goBtn").addEventListener("click", renderBooks);
+
+  // ── FLIPBOOK — 3D PAGE TURN ENGINE ───────────────────────────
+  let currentPages = [], currentIndex = 0, isAnimating = false;
+  const flipModal    = document.getElementById("flipbookModal");
+  const pageLeaf     = document.getElementById("pageLeaf");
+  const frontImg     = document.getElementById("frontImg");
+  const backImg      = document.getElementById("backImg");
+  const stackImg     = document.getElementById("stackImg");
+  const pageDots     = document.getElementById("pageDots");
+  const prevBtn      = document.getElementById("prevImgBtn");
+  const nextBtn      = document.getElementById("nextImgBtn");
+
+  // Preload an image url silently
+  function preload(src) {
+    if (!src) return;
+    const i = new Image(); i.src = src;
+  }
+
+  function openFlipbook(book) {
+    if (!book.pages || book.pages.length === 0) {
+      alert("This book has no page images yet."); return;
+    }
+    currentPages = book.pages;
+    currentIndex = 0;
+    isAnimating = false;
+
+    document.getElementById("modalBookTitle").textContent = book.title;
+    document.getElementById("modalBookSub").textContent   = `${book.author} · ${book.subject}`;
+
+    // Reset leaf to resting position instantly (no transition)
+    pageLeaf.style.transition = 'none';
+    pageLeaf.style.transform  = 'rotateY(0deg)';
+
+    // Seed images
+    frontImg.src = currentPages[0];
+    backImg.src  = currentPages[1] || currentPages[0];
+    stackImg.src = currentPages[0];
+
+    // Preload next few
+    preload(currentPages[1]);
+    preload(currentPages[2]);
+
+    buildDots();
+    updateIndicator();
+    updateNavButtons();
+    flipModal.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+
+  function buildDots() {
+    pageDots.innerHTML = '';
+    const max = Math.min(currentPages.length, 15);
+    for (let i = 0; i < max; i++) {
+      const d = document.createElement('div');
+      d.className = 'page-dot' + (i === 0 ? ' active' : '');
+      d.addEventListener('click', () => { if (!isAnimating) jumpToPage(i); });
+      pageDots.appendChild(d);
+    }
+  }
+
+  function updateIndicator() {
+    document.getElementById("pageIndicator").textContent =
+      `Page ${currentIndex + 1} of ${currentPages.length}`;
+    const dots = pageDots.querySelectorAll('.page-dot');
+    dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex % dots.length));
+  }
+
+  function updateNavButtons() {
+    prevBtn.disabled = currentIndex === 0;
+    nextBtn.disabled = currentIndex === currentPages.length - 1;
+  }
+
+  // ── FORWARD TURN (right → away) ──
+  function turnForward() {
+    if (isAnimating || currentIndex >= currentPages.length - 1) return;
+    isAnimating = true;
+
+    const nextIdx = currentIndex + 1;
+
+    // Stack underneath shows the upcoming page
+    stackImg.src = currentPages[nextIdx];
+
+    // Front = current page, Back = next page (already loaded if possible)
+    frontImg.src = currentPages[currentIndex];
+    backImg.src  = currentPages[nextIdx];
+    preload(currentPages[nextIdx + 1]);
+
+    // Animate: leaf sweeps from 0° → −180° (rotates left, revealing back face)
+    pageLeaf.style.transition = 'none';
+    pageLeaf.style.transform  = 'rotateY(0deg)';
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      pageLeaf.style.transition = 'transform 0.75s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
+      pageLeaf.style.transform  = 'rotateY(-180deg)';
+    }));
+
+    setTimeout(() => {
+      // After turn: the new page is "current" — reset leaf to show front face = nextIdx
+      currentIndex = nextIdx;
+      pageLeaf.style.transition = 'none';
+      pageLeaf.style.transform  = 'rotateY(0deg)';
+      frontImg.src = currentPages[currentIndex];
+      backImg.src  = currentPages[currentIndex + 1] || currentPages[currentIndex];
+      stackImg.src = currentPages[currentIndex];
+      updateIndicator();
+      updateNavButtons();
+      isAnimating = false;
+    }, 760);
+  }
+
+  // ── BACKWARD TURN (left → toward you) ──
+  function turnBack() {
+    if (isAnimating || currentIndex <= 0) return;
+    isAnimating = true;
+
+    const prevIdx = currentIndex - 1;
+
+    // Stack underneath shows the previous page (destination)
+    stackImg.src = currentPages[currentIndex];
+
+    // Leaf starts "already flipped" showing the current page on the back face
+    // then sweeps back to 0° revealing the previous page on the front
+    frontImg.src = currentPages[prevIdx];
+    backImg.src  = currentPages[currentIndex];
+
+    // Start at −180° (flipped state), no transition
+    pageLeaf.style.transition = 'none';
+    pageLeaf.style.transform  = 'rotateY(-180deg)';
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      pageLeaf.style.transition = 'transform 0.75s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
+      pageLeaf.style.transform  = 'rotateY(0deg)';
+    }));
+
+    setTimeout(() => {
+      currentIndex = prevIdx;
+      frontImg.src = currentPages[currentIndex];
+      backImg.src  = currentPages[currentIndex + 1] || currentPages[currentIndex];
+      stackImg.src = currentPages[currentIndex];
+      updateIndicator();
+      updateNavButtons();
+      isAnimating = false;
+    }, 760);
+  }
+
+  // ── JUMP TO PAGE (dot click) ──
+  function jumpToPage(idx) {
+    if (idx === currentIndex || isAnimating) return;
+    const dir = idx > currentIndex ? 1 : -1;
+    currentIndex = idx;
+    // Instant swap with a quick scale pop
+    pageLeaf.style.transition = 'none';
+    pageLeaf.style.transform  = 'rotateY(0deg)';
+    frontImg.src = currentPages[currentIndex];
+    backImg.src  = currentPages[currentIndex + 1] || currentPages[currentIndex];
+    stackImg.src = currentPages[currentIndex];
+    pageLeaf.style.transition = 'transform 0.25s ease';
+    pageLeaf.style.transform  = dir > 0 ? 'rotateY(-8deg)' : 'rotateY(8deg)';
+    setTimeout(() => { pageLeaf.style.transform = 'rotateY(0deg)'; }, 250);
+    updateIndicator();
+    updateNavButtons();
+  }
+
+  nextBtn.addEventListener("click", turnForward);
+  prevBtn.addEventListener("click", turnBack);
+  document.getElementById("closeFlipBtn").addEventListener("click", closeModal);
+  flipModal.addEventListener("click", e => { if (e.target === flipModal) closeModal(); });
+
+  function closeModal() {
+    flipModal.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+
+  // Keyboard
+  document.addEventListener("keydown", e => {
+    if (!flipModal.classList.contains("active")) return;
+    if (e.key === "ArrowRight") turnForward();
+    if (e.key === "ArrowLeft")  turnBack();
+    if (e.key === "Escape")     closeModal();
+  });
+
+  // Touch swipe
+  let touchStartX = 0, touchStartY = 0;
+  const flipScene = document.getElementById("flipScene");
+  flipScene.addEventListener("touchstart", e => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+  flipScene.addEventListener("touchend", e => {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    const dy = Math.abs(e.changedTouches[0].screenY - touchStartY);
+    if (dy > 40) return; // vertical scroll, ignore
+    if (dx < -45) turnForward();
+    if (dx > 45)  turnBack();
+  });
+
+  // Drag on the leaf itself for desktop feel
+  let dragStartX = null;
+  pageLeaf.addEventListener("mousedown", e => { dragStartX = e.clientX; });
+  document.addEventListener("mouseup", e => {
+    if (dragStartX === null || !flipModal.classList.contains("active")) return;
+    const dx = e.clientX - dragStartX;
+    dragStartX = null;
+    if (dx < -30) turnForward();
+    if (dx > 30)  turnBack();
+  });
+
+  // ── SPLASH ────────────────────────────────────────────────────
+  window.addEventListener("load", () => {
+    loadBooks();
+    setTimeout(() => {
+      const splash = document.getElementById("splash");
+      splash.style.opacity = "0";
+      setTimeout(() => {
+        splash.style.display = "none";
+        document.getElementById("mainApp").classList.add("visible");
+      }, 800);
+    }, 2800);
+  });
+</script>
+</body>
+</html>

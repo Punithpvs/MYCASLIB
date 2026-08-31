@@ -1,0 +1,472 @@
+
+[
+  {
+    "id": 1,
+    "program": "BCom",
+    "semester": "1",
+    "subject": "FUNDAMENTALS OF FINANCIAL ACCOUNTING",
+    "title": "Financial Accounting I",
+    "author": "ernest l.Hanson",
+    "pages": [
+      "https://i.ibb.co/fzyX9QM7/IMG-1387.avif",
+      "https://i.ibb.co/HTZfP4yW/IMG-1389.avif",
+      "https://i.ibb.co/kVpQby7P/IMG-1390.avif",
+      "https://i.ibb.co/7xLd9F1t/IMG-1391.avif",
+"https://i.ibb.co/CKfNJ3r5/IMG-1392.avif",
+"https://i.ibb.co/mrH01ppD/IMG-1393.avif",
+"https://i.ibb.co/tpj52Vg3/IMG-1394.avif",
+"https://i.ibb.co/tpj52Vg3/IMG-1394.avif",
+"https://i.ibb.co/Fkgr2TRk/IMG-1396.avif",
+"https://i.ibb.co/VYqJ0PcJ/IMG-1388.avif"
+    ]
+  },
+  {
+    "id": 2,
+    "program": "BCom",
+    "semester": "1",
+    "subject": "FUNDAMENTALS OF FINANCIAL ACCOUNTING",
+    "title": "Corporate Accounting",
+    "author": "S.N. Maheshwari",
+    "pages": [
+       "",
+      "",
+      ""
+    ]
+  },
+
+{
+    "id": 3,
+    "program": "BCom",
+    "semester": "1",
+    "subject": "FUNDAMENTALS OF FINANCIAL ACCOUNTING",
+    "title": "Financial Accounting",
+    "author": "punith r ",
+    "pages": [
+       "https://i.ibb.co/RpmbrWGZ/IMG-1397.avif",
+      "https://i.ibb.co/5x5TFzw1/IMG-1399.avif",
+ "https://i.ibb.co/cK4gzRxj/IMG-1400.avif",
+      "https://i.ibb.co/7tw3PbZ3/IMG-1401.avif",
+ "https://i.ibb.co/nMj8yT5F/IMG-1402.avif",
+      "https://i.ibb.co/7dXWXyM3/IMG-1398.avif"
+    ]
+  },
+{
+    "id": 4,
+    "program": "BCom",
+    "semester": "1",
+    "subject": "FUNDAMENTALS OF FINANCIAL ACCOUNTING",
+    "title": "Marketing Research",
+    "author": "S.N. Maheshwari",
+    "pages": [
+       "https://i.ibb.co/m5WxJXC9/IMG-1381.avif",
+      "https://i.ibb.co/0yvKVqZL/IMG-1379.avif",
+      "https://i.ibb.co/x900bZY/IMG-1380.avif",
+      "https://i.ibb.co/qYxGfRXn/IMG-1382.avif"
+    ]
+  },
+  {
+    "id": 5,
+    "program": "BCom",
+    "semester": "1",
+    "subject": "FUNDAMENTALS OF FINANCIAL ACCOUNTING",
+    "title": "Corporate Accounting",
+    "author": "S.N. Maheshwari",
+    "pages": [
+       "https://i.ibb.co/zVC1HWGz/IMG-1416.avif",
+      "https://i.ibb.co/600F7Q86/IMG-1418.avif",
+      "https://i.ibb.co/8LVH54f8/IMG-1419.avif",
+      "https://i.ibb.co/93kwq50m/IMG-1420.avif",
+      "https://i.ibb.co/0yqXN9sY/IMG-1421.avif",
+      "https://i.ibb.co/whm5mngw/IMG-1422.avif",
+      "https://i.ibb.co/yFrqmGf8/IMG-1423.avif",
+       "https://i.ibb.co/XkjML6jy/IMG-1424.avif",
+      "https://i.ibb.co/277GyJ0g/IMG-1425.avif",
+       "https://i.ibb.co/pvsKp3zH/IMG-1426.avif",
+      "https://i.ibb.co/gL8L2gx7/IMG-1417.avif"
+    ]
+  },
+  {
+    "id": 6,
+    "program": "BBA",
+    "semester": "1",
+    "subject": "Principles & Practices of Management",
+    "title": "Principles & Practices of Management",
+    "author": "S.N. Maheshwari",
+    "pages": [
+      "https://i.ibb.co/QFRDV8br/IMG20260831142321.jpg",
+"https://i.ibb.co/BVVYt2Vy/IMG20260831142340.jpg",
+"https://i.ibb.co/KzXqKGCN/IMG20260831142350.jpg"
+    ]
+  },
+{
+    "id": 7,
+    "program": "BBA",
+    "semester": "1",
+    "subject": "Principles & Practices of Management",
+    "title": "Principles & Practices of Management",
+    "author": "S.N. Maheshwari",
+    "pages": [
+      "https://i.ibb.co/gMgVbnJ7/IMG20260831142523.jpg",
+"https://i.ibb.co/Tx8rb8cq/IMG20260831142538.jpg",
+"https://i.ibb.co/mCLwvZBd/IMG20260831142551.jpg"      
+
+    ]
+  },
+{
+    "id": 8,
+    "program": "BBA",
+    "semester": "1",
+    "subject": "Fundamentals of Business Accounting",
+    "title": "Fundamentals of Business Accounting",
+    "author": "S.N. Maheshwari",
+    "pages": [
+       "",
+      "",
+      ""
+    ]
+  },
+{
+    "id": 9,
+     "program": "BBA",
+    "semester": "1",
+    "subject": "Fundamentals of Business Accounting",
+    "title": "Fundamentals of Business Accounting",
+    "author": "S.N. Maheshwari",
+    "pages": [
+       "",
+      "",
+      ""
+    ]
+  },
+{
+    "id": 10,
+     "program": "BBA",
+    "semester": "1",
+    "subject": "Fundamentals of Business Accounting",
+    "title": "Fundamentals of Business Accounting",
+    "author": "S.N. Maheshwari",
+    "pages": [
+       "",
+      "",
+      ""
+    ]
+  },
+  {
+    "id": 11,
+     "program": "BBA",
+    "semester": "1",
+    "subject": "Business Economics",
+    "title": "Business Economics",
+    "author": "S.N. Maheshwari",
+    "pages": [
+      "https://i.ibb.co/fYL00GZM/IMG20260831142122.jpg",
+"https://i.ibb.co/KcKFzpJr/IMG20260831142149.jpg",
+"https://i.ibb.co/7tQzRp0r/IMG20260831142201.jpg",
+"https://i.ibb.co/N2kGQjRV/IMG20260831142215.jpg"
+    ]
+  },
+{
+    "id": 11,
+     "program": "BBA",
+    "semester": "1",
+    "subject": "Business Economics",
+    "title": "Business Economics",
+    "author": "S.N. Maheshwari",
+    "pages": [
+      "https://i.ibb.co/rfGL0mBn/IMG20260831141721.jpg",
+"https://i.ibb.co/YTwnvmwB/IMG20260831141733.jpg",
+"https://i.ibb.co/8gMFsW9y/IMG20260831141745.jpg"
+
+    ]
+  },
+  {
+    "id": 12,
+     "program": "BBA",
+    "semester": "1",
+    "subject": "Business Economics",
+    "title": "Business Economics",
+    "author": "S.N. Maheshwari",
+    "pages": [
+      "https://i.ibb.co/kgDM7W68/IMG20260831141803.jpg",
+"https://i.ibb.co/wNPvgRVP/IMG20260831141815.jpg",
+"https://i.ibb.co/2mS4CX9/IMG20260831141826.jpg",
+"https://i.ibb.co/KzSkMpQB/IMG20260831141832.jpg",
+"https://i.ibb.co/bgVBqXYL/IMG20260831141840.jpg",
+"https://i.ibb.co/yBG2Ntw0/IMG20260831141846.jpg",
+"https://i.ibb.co/0p819mNd/IMG20260831141853.jpg",
+"https://i.ibb.co/fdpf1nJb/IMG20260831141901.jpg",
+"https://i.ibb.co/n9qXjtp/IMG20260831141910.jpg",
+"https://i.ibb.co/gLXCjs48/IMG20260831141921.jpg",
+"https://i.ibb.co/d4Phg9FD/IMG20260831141929.jpg",
+"https://i.ibb.co/20SXFsZK/IMG20260831141936.jpg"
+    ]
+  },
+  {
+    "id": 13,
+     "program": "BBA",
+    "semester": "1",
+    "subject": "Business Communication",
+    "title": "Business Communication",
+    "author": "S.N. Maheshwari",
+    "pages": [
+      "https://i.ibb.co/WNTTKqfy/IMG20260831142700.jpg",
+"https://i.ibb.co/v4FCpxcL/IMG20260831142718.jpg",
+"https://i.ibb.co/wFMr2XH5/IMG20260831142726.jpg"
+
+    ]
+  },
+  {
+    "id": 14,
+     "program": "BBA",
+    "semester": "1",
+    "subject": "Business Communication",
+    "title": "Business Communication",
+    "author": "S.N. Maheshwari",
+    "pages": [
+      "https://i.ibb.co/qwFKqx0/IMG20260831142740.jpg",
+"https://i.ibb.co/VpJRk9YJ/IMG20260831142753.jpg",
+"https://i.ibb.co/CKyyHBcH/IMG20260831142807.jpg"
+
+
+    ]
+  },{
+    "id": 15,
+     "program": "BBA",
+    "semester": "1",
+    "subject": "Business Communication",
+    "title": "Business Communication",
+    "author": "S.N. Maheshwari",
+    "pages": [
+     "https://i.ibb.co/9HxByB3d/IMG20260831142817.jpg",
+"https://i.ibb.co/RGk0nm3p/IMG20260831142832.jpg",
+"https://i.ibb.co/yc6dXS4z/IMG20260831142845.jpg"
+ 
+
+    ]
+  },{
+    "id": 16,
+     "program": "BBA",
+    "semester": "1",
+    "subject": "Business Communication",
+    "title": "Business Communication",
+    "author": "S.N. Maheshwari",
+    "pages": [
+      "https://i.ibb.co/twjn3tL0/IMG20260831142859.jpg",
+"https://i.ibb.co/BKg1ppD6/IMG20260831142916.jpg",
+"https://i.ibb.co/M5Q1fjvL/IMG20260831142945.jpg",
+"https://i.ibb.co/1tZdmN1J/IMG20260831142953.jpg"
+
+
+    ]
+  },{
+    "id": 17,
+     "program": "BBA",
+    "semester": "1",
+    "subject": "Business Communication",
+    "title": "Business Communication",
+    "author": "S.N. Maheshwari",
+    "pages": [
+      "https://i.ibb.co/twVszk5k/IMG20260831143015.jpg",
+"https://i.ibb.co/JFx5Lfdj/IMG20260831143035.jpg",
+"https://i.ibb.co/cKPwp5zc/IMG20260831143043.jpg",
+"https://i.ibb.co/k6BfQ1fk/IMG20260831143057.jpg"
+
+
+    ]
+  },
+  {
+    "id": 18,
+     "program": "BBA",
+    "semester": "1",
+    "subject": "Business Communication",
+    "title": "Business Communication",
+    "author": "S.N. Maheshwari",
+    "pages": [
+      "https://i.ibb.co/ynJJ7cCP/IMG20260831143107.jpg",
+"https://i.ibb.co/Kxyw3cz1/IMG20260831143800.jpg"
+
+    ]
+  },
+{
+    "id": 19,
+     "program": "BBA",
+    "semester": "1",
+    "subject": "Constitutional Values",
+    "title": "Constitutional Values",
+    "author": "",
+    "pages": [
+      "https://i.ibb.co/RRMHtvr/IMG20260831144739.jpg",
+"https://i.ibb.co/0RnXz6PF/IMG20260831144748.jpg",
+"https://i.ibb.co/1GFcVHK0/IMG20260831144752.jpg",
+"https://i.ibb.co/FLFzDs6R/IMG20260831144757.jpg"
+
+
+    ]
+  },
+{
+    "id": 20,
+     "program": "BBA",
+    "semester": "1",
+    "subject": "Constitutional Values",
+    "title": "Constitutional Values",
+    "author": "",
+    "pages": [
+      "https://i.ibb.co/SDb8V8B5/IMG20260831144802.jpg",
+"https://i.ibb.co/qFMQjW3P/IMG20260831144811.jpg",
+"https://i.ibb.co/Fbfv5NBj/IMG20260831144819.jpg",
+"https://i.ibb.co/QRrw93n/IMG20260831144835.jpg"
+
+
+    ]
+  },
+  {
+    "id": 21,
+     "program": "BBA",
+    "semester": "1",
+    "subject": "Constitutional Values",
+    "title": "Constitutional Values",
+    "author": "",
+    "pages": [
+      "https://i.ibb.co/tT5P4Y8N/IMG20260831144840.jpg",
+"https://i.ibb.co/sJJxtVYq/IMG20260831144855.jpg",
+"https://i.ibb.co/qFrkzP4M/IMG20260831144900.jpg"
+
+
+    ]
+  },
+  {
+    "id": 22,
+     "program": "BBA",
+    "semester": "1",
+    "subject": "Constitutional Values",
+    "title": "Constitutional Values",
+    "author": "",
+    "pages": [
+      "https://i.ibb.co/yB0cjzTP/IMG20260831144905.jpg",
+"https://i.ibb.co/wFCdmNnv/IMG20260831144925.jpg",
+"https://i.ibb.co/Kx1G48LS/IMG20260831144931.jpg",
+"https://i.ibb.co/TDnhk3qG/IMG20260831144936.jpg"
+
+
+    ]
+  },
+  {
+    "id": 23,
+     "program": "BCom",
+    "semester": "1",
+    "subject": "KANNADA",
+    "title": "KANNADA",
+    "author": "",
+    "pages": [
+"https://i.ibb.co/27V8X9X1/IMG20260831145117.jpg"
+
+
+    ]
+  },
+  {
+    "id": 24,
+     "program": "BCom",
+    "semester": "1",
+    "subject": "ENGLISH",
+    "title": "ENGLISH",
+    "author": "",
+    "pages": [
+
+"https://i.ibb.co/5hmWV6RY/IMG20260831145121.jpg"
+
+    ]
+  },
+  {
+    "id": 25,
+     "program": "BCom",
+    "semester": "1",
+    "subject": "BUSINESS MANAGEMENT",
+    "title": "BUSINESS MANAGEMENT",
+    "author": "",
+    "pages": [
+
+"https://i.ibb.co/FLc5htq7/IMG20260831144137.jpg",
+"https://i.ibb.co/qF3NsQp2/IMG20260831144149.jpg",
+"https://i.ibb.co/gM8GF8Q6/IMG20260831144155.jpg"
+
+
+    ]
+  },
+  {
+    "id": 26,
+     "program": "BCom",
+    "semester": "1",
+    "subject": "BUSINESS MANAGEMENT",
+    "title": "BUSINESS MANAGEMENT",
+    "author": "",
+    "pages": [
+
+"https://i.ibb.co/C5xZwQW3/IMG20260831144204.jpg",
+"https://i.ibb.co/ccVthdsB/IMG20260831144222.jpg",
+"https://i.ibb.co/dJzd5743/IMG20260831144229.jpg"
+
+
+    ]
+  },
+  {
+    "id": 27,
+     "program": "BCom",
+    "semester": "1",
+    "subject": "BANKING LAW AND PRACTICE",
+    "title": "BANKING LAW AND PRACTICE",
+    "author": "",
+    "pages": [
+"https://i.ibb.co/TxDZDs5K/IMG20260831144327.jpg",
+"https://i.ibb.co/Gvk9TL1q/IMG20260831144417.jpg",
+"https://i.ibb.co/fV2PVg7h/IMG20260831144425.jpg"
+
+    ]
+  },
+  {
+    "id": 28,
+     "program": "BCom",
+    "semester": "1",
+    "subject": "BANKING LAW AND PRACTICE",
+    "title": "BANKING LAW AND PRACTICE",
+    "author": "",
+    "pages": [
+"https://i.ibb.co/pj8rK5zf/IMG20260831144437.jpg",
+"https://i.ibb.co/fVj6xdtd/IMG20260831144458.jpg",
+"https://i.ibb.co/27MgQF99/IMG20260831144507.jpg"
+
+    ]
+  },
+  {
+    "id": 29,
+     "program": "BCom",
+    "semester": "1",
+    "subject": "BANKING LAW AND PRACTICE",
+    "title": "BANKING LAW AND PRACTICE",
+    "author": "",
+    "pages": [
+"https://i.ibb.co/HLGtWqVK/IMG20260831144516.jpg",
+"https://i.ibb.co/F49SnDB4/IMG20260831144531.jpg",
+"https://i.ibb.co/pvxwL1Rx/IMG20260831144538.jpg"
+
+    ]
+  },
+  {
+    "id": 30,
+     "program": "BCom",
+    "semester": "1",
+    "subject": "BANKING LAW AND PRACTICE",
+    "title": "BANKING LAW AND PRACTICE",
+    "author": "",
+    "pages": [
+"https://i.ibb.co/XZqBY0JC/IMG20260831144546.jpg",
+"https://i.ibb.co/6phds8Z/IMG20260831144602.jpg",
+"https://i.ibb.co/ynRbQTd2/IMG20260831144608.jpg",
+"https://i.ibb.co/n88nryGN/IMG20260831144615.jpg",
+"https://i.ibb.co/KBx05kw/IMG20260831144620.jpg",
+"https://i.ibb.co/xqkQ3dSK/IMG20260831144632.jpg",
+"https://i.ibb.co/nVb4pFq/IMG20260831144638.jpg",
+"https://i.ibb.co/jPKtvnQm/IMG20260831144644.jpg"
+
+    ]
+  }
+]
