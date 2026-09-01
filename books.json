@@ -20,20 +20,7 @@
 "https://i.ibb.co/VYqJ0PcJ/IMG-1388.avif"
     ]
   },
-  {
-    "id": 2,
-    "program": "BCom",
-    "semester": "1",
-    "subject": "FUNDAMENTALS OF FINANCIAL ACCOUNTING",
-    "title": "Corporate Accounting",
-    "author": "S.N. Maheshwari",
-    "pages": [
-       "",
-      "",
-      ""
-    ]
-  },
-
+  
 {
     "id": 3,
     "program": "BCom",
@@ -468,5 +455,70 @@
 "https://i.ibb.co/jPKtvnQm/IMG20260831144644.jpg"
 
     ]
+  },
+  {
+    "id": 31,
+     "program": "BCom",
+    "semester": "1",
+    "subject": "CONSTITUTIONAL VALUE",
+    "title": "CONSTITUTIONAL VALUE",
+    "author": "",
+    "pages": [
+      "https://i.ibb.co/RRMHtvr/IMG20260831144739.jpg",
+"https://i.ibb.co/0RnXz6PF/IMG20260831144748.jpg",
+"https://i.ibb.co/1GFcVHK0/IMG20260831144752.jpg",
+"https://i.ibb.co/FLFzDs6R/IMG20260831144757.jpg"
+
+
+    ]
+  },
+{
+    "id": 32,
+     "program": "BCom",
+    "semester": "1",
+    "subject": "CONSTITUTIONAL VALUE",
+    "title": "CONSTITUTIONAL VALUE",
+    "author": "",
+    "pages": [
+      "https://i.ibb.co/SDb8V8B5/IMG20260831144802.jpg",
+"https://i.ibb.co/qFMQjW3P/IMG20260831144811.jpg",
+"https://i.ibb.co/Fbfv5NBj/IMG20260831144819.jpg",
+"https://i.ibb.co/QRrw93n/IMG20260831144835.jpg"
+
+
+    ]
+  },
+  {
+    "id": 33,
+     "program": "BCom",
+    "semester": "1",
+    "subject": "CONSTITUTIONAL VALUE",
+    "title": "CONSTITUTIONAL VALUE",
+    "author": "",
+    "pages": [
+      "https://i.ibb.co/tT5P4Y8N/IMG20260831144840.jpg",
+"https://i.ibb.co/sJJxtVYq/IMG20260831144855.jpg",
+"https://i.ibb.co/qFrkzP4M/IMG20260831144900.jpg"
+
+
+    ]
+  },
+  {
+    "id": 34,
+     "program": "BCom",
+    "semester": "1",
+    "subject": "CONSTITUTIONAL VALUE",
+    "title": "CONSTITUTIONAL VALUE",
+    "author": "",
+    "pages": [
+     " https://i.ibb.co/0V8G25sH/IMG20260831144905.jpg",
+      
+"https://i.ibb.co/wFCdmNnv/IMG20260831144925.jpg",
+"https://i.ibb.co/Kx1G48LS/IMG20260831144931.jpg",
+"https://i.ibb.co/TDnhk3qG/IMG20260831144936.jpg"
+
+
+    ]
   }
+
 ]

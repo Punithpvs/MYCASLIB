@@ -464,6 +464,26 @@
     .nav-arrow:disabled { opacity: 0.25; cursor: default; }
 
     /* ── 3D FLIP WRAPPER ── */
+    /* ── RELIABLE PAGE LOADING INDICATOR ── */
+    .flip-scene.page-loading::before {
+      content: "Loading page…";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 50;
+      background: rgba(17,29,43,0.94);
+      color: var(--gold-light);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+    }
+
     .flip-scene {
       perspective: 1400px;
       width: 300px; height: 420px;
@@ -856,7 +876,7 @@
     "II PUC Commerce_2": ["Kannada","English","Economics","Business Studies","Accountancy","Computer Science"],
     "I PUC Science_1": ["Kannada","English","Physics","Chemistry","Mathematics","Biology","Computer Science"],
     "II PUC Science_2": ["Kannada","English","Physics","Chemistry","Mathematics","Biology","Computer Science"],
-    "BCom_1": ["FUNDAMENTALS OF FINANCIAL ACCOUNTING","BUSINESS MATHEMATICS","BANKING LAW AND PRACTICE","KANNADA","ENGLISH","CONSTITUTIONAL VALUE"],
+    "BCom_1": ["FUNDAMENTALS OF FINANCIAL ACCOUNTING","BUSINESS MANAGEMENT","BANKING LAW AND PRACTICE","KANNADA","ENGLISH","CONSTITUTIONAL VALUE"],
     "BCom_2": ["ADVANCED FINANCIAL ACCOUNTING","FUNDAMENTALS OF COS ACCOUNTING","COMPANY LAW AND PRACTICE","KANNADA","ENGLISH","CONSTITUTIONAL VALUE"],
     "BCom_3": ["FUNDAMENTALS CORPORATE ACCOUNTING OF","INCOME TAX LAW & PRACTICE - I","ADVANCED ACCOUNTING","COST","ELECTIVE","ELECTIVE"],
     "BCom_4": ["ADVANCED CORPORATE ACCOUNTING","INCOME TAX LAW & PRACTICE - II","BUSINESS STATSTICS","ELECTIVE","ENTREPRENEURSHIP DEVELOPMENT"],
@@ -978,7 +998,7 @@
       card.className = "book-card";
       card.innerHTML = `
         <div class="book-cover">
-          <img src="${coverImg}" alt="${book.title}" loading="lazy">
+          <img src="${coverImg}" alt="${book.title}" loading="lazy" decoding="async" fetchpriority="low">
         </div>
         <div class="book-info">
           <span class="book-subject-tag">${book.subject || subj}</span>
@@ -1000,223 +1020,586 @@
 
   document.getElementById("goBtn").addEventListener("click", renderBooks);
 
-  // ── FLIPBOOK — 3D PAGE TURN ENGINE ───────────────────────────
-  let currentPages = [], currentIndex = 0, isAnimating = false;
-  const flipModal    = document.getElementById("flipbookModal");
-  const pageLeaf     = document.getElementById("pageLeaf");
-  const frontImg     = document.getElementById("frontImg");
-  const backImg      = document.getElementById("backImg");
-  const stackImg     = document.getElementById("stackImg");
-  const pageDots     = document.getElementById("pageDots");
-  const prevBtn      = document.getElementById("prevImgBtn");
-  const nextBtn      = document.getElementById("nextImgBtn");
+  // ── FLIPBOOK — RELIABLE 3D PAGE TURN ENGINE ─────────────────────
+  // IMPORTANT:
+  // We NEVER change the visible page until the destination image is loaded.
+  // This prevents the old/first/second page from being shown repeatedly when
+  // ImgBB is slow.
+  let currentPages = [];
+  let currentIndex = 0;
+  let isAnimating = false;
+  let loadToken = 0;
+  const imageCache = new Map();
 
-  // Preload an image url silently
-  function preload(src) {
-    if (!src) return;
-    const i = new Image(); i.src = src;
+  const flipModal = document.getElementById("flipbookModal");
+  const pageLeaf = document.getElementById("pageLeaf");
+  const frontImg = document.getElementById("frontImg");
+  const backImg = document.getElementById("backImg");
+  const stackImg = document.getElementById("stackImg");
+  const pageDots = document.getElementById("pageDots");
+  const prevBtn = document.getElementById("prevImgBtn");
+  const nextBtn = document.getElementById("nextImgBtn");
+  const flipScene = document.getElementById("flipScene");
+
+  function cleanUrl(url) {
+    return typeof url === "string" ? url.trim() : "";
   }
 
-  function openFlipbook(book) {
-    if (!book.pages || book.pages.length === 0) {
-      alert("This book has no page images yet."); return;
+  function clearImg(img) {
+    img.removeAttribute("src");
+    img.removeAttribute("srcset");
+  }
+
+  function setImg(img, url) {
+    url = cleanUrl(url);
+    if (!url) {
+      clearImg(img);
+      return;
     }
-    currentPages = book.pages;
-    currentIndex = 0;
-    isAnimating = false;
+    img.src = url;
+  }
 
-    document.getElementById("modalBookTitle").textContent = book.title;
-    document.getElementById("modalBookSub").textContent   = `${book.author} · ${book.subject}`;
+  /*
+   * Load an image exactly once.
+   * The Promise resolves ONLY after the image is actually decoded/loaded.
+   */
+  function loadImage(url) {
+    url = cleanUrl(url);
 
-    // Reset leaf to resting position instantly (no transition)
-    pageLeaf.style.transition = 'none';
-    pageLeaf.style.transform  = 'rotateY(0deg)';
+    if (!url) {
+      return Promise.reject(new Error("Empty image URL"));
+    }
 
-    // Seed images
-    frontImg.src = currentPages[0];
-    backImg.src  = currentPages[1] || currentPages[0];
-    stackImg.src = currentPages[0];
+    if (imageCache.has(url)) {
+      return imageCache.get(url);
+    }
 
-    // Preload next few
-    preload(currentPages[1]);
-    preload(currentPages[2]);
+    const promise = new Promise((resolve, reject) => {
+      const img = new Image();
+      img.decoding = "async";
 
-    buildDots();
-    updateIndicator();
-    updateNavButtons();
-    flipModal.classList.add("active");
-    document.body.style.overflow = "hidden";
+      img.onload = async () => {
+        try {
+          if (img.decode) {
+            await img.decode();
+          }
+        } catch (_) {
+          // The image is already loaded; decoding failure is not fatal.
+        }
+        resolve(img);
+      };
+
+      img.onerror = () => {
+        imageCache.delete(url);
+        reject(new Error("Unable to load image: " + url));
+      };
+
+      img.src = url;
+    });
+
+    imageCache.set(url, promise);
+    return promise;
+  }
+
+  function showLoading() {
+    flipScene.classList.add("page-loading");
+  }
+
+  function hideLoading() {
+    flipScene.classList.remove("page-loading");
+  }
+
+  function preload(url) {
+    if (!url) return;
+    loadImage(url).catch(() => {});
+  }
+
+  // Only keep a small number of image promises in memory.
+  function trimCache() {
+    if (imageCache.size <= 10) return;
+
+    const needed = new Set();
+
+    for (
+      let i = Math.max(0, currentIndex - 2);
+      i <= Math.min(currentPages.length - 1, currentIndex + 3);
+      i++
+    ) {
+      if (currentPages[i]) needed.add(currentPages[i]);
+    }
+
+    for (const key of imageCache.keys()) {
+      if (imageCache.size <= 10) break;
+      if (!needed.has(key)) imageCache.delete(key);
+    }
+  }
+
+  function preloadAround(index) {
+    // Previous + current + next 3 pages.
+    for (let i = -1; i <= 3; i++) {
+      const n = index + i;
+      if (n >= 0 && n < currentPages.length) {
+        preload(currentPages[n]);
+      }
+    }
+    trimCache();
   }
 
   function buildDots() {
-    pageDots.innerHTML = '';
-    const max = Math.min(currentPages.length, 15);
-    for (let i = 0; i < max; i++) {
-      const d = document.createElement('div');
-      d.className = 'page-dot' + (i === 0 ? ' active' : '');
-      d.addEventListener('click', () => { if (!isAnimating) jumpToPage(i); });
-      pageDots.appendChild(d);
+    pageDots.innerHTML = "";
+
+    const maxDots = Math.min(currentPages.length, 15);
+
+    for (let i = 0; i < maxDots; i++) {
+      const dot = document.createElement("div");
+      dot.className = "page-dot" + (i === 0 ? " active" : "");
+
+      dot.addEventListener("click", () => {
+        if (!isAnimating) {
+          jumpToPage(i);
+        }
+      });
+
+      pageDots.appendChild(dot);
     }
   }
 
   function updateIndicator() {
     document.getElementById("pageIndicator").textContent =
       `Page ${currentIndex + 1} of ${currentPages.length}`;
-    const dots = pageDots.querySelectorAll('.page-dot');
-    dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex % dots.length));
+
+    const dots = pageDots.querySelectorAll(".page-dot");
+
+    dots.forEach((dot, i) => {
+      dot.classList.toggle(
+        "active",
+        i === Math.min(currentIndex, dots.length - 1)
+      );
+    });
   }
 
   function updateNavButtons() {
-    prevBtn.disabled = currentIndex === 0;
-    nextBtn.disabled = currentIndex === currentPages.length - 1;
+    prevBtn.disabled = currentIndex <= 0;
+    nextBtn.disabled = currentIndex >= currentPages.length - 1;
   }
 
-  // ── FORWARD TURN (right → away) ──
-  function turnForward() {
-    if (isAnimating || currentIndex >= currentPages.length - 1) return;
-    isAnimating = true;
-
-    const nextIdx = currentIndex + 1;
-
-    // Stack underneath shows the upcoming page
-    stackImg.src = currentPages[nextIdx];
-
-    // Front = current page, Back = next page (already loaded if possible)
-    frontImg.src = currentPages[currentIndex];
-    backImg.src  = currentPages[nextIdx];
-    preload(currentPages[nextIdx + 1]);
-
-    // Animate: leaf sweeps from 0° → −180° (rotates left, revealing back face)
-    pageLeaf.style.transition = 'none';
-    pageLeaf.style.transform  = 'rotateY(0deg)';
-
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      pageLeaf.style.transition = 'transform 0.75s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
-      pageLeaf.style.transform  = 'rotateY(-180deg)';
-    }));
-
-    setTimeout(() => {
-      // After turn: the new page is "current" — reset leaf to show front face = nextIdx
-      currentIndex = nextIdx;
-      pageLeaf.style.transition = 'none';
-      pageLeaf.style.transform  = 'rotateY(0deg)';
-      frontImg.src = currentPages[currentIndex];
-      backImg.src  = currentPages[currentIndex + 1] || currentPages[currentIndex];
-      stackImg.src = currentPages[currentIndex];
-      updateIndicator();
-      updateNavButtons();
-      isAnimating = false;
-    }, 760);
+  function resetLeaf() {
+    pageLeaf.style.transition = "none";
+    pageLeaf.style.transform = "rotateY(0deg)";
   }
 
-  // ── BACKWARD TURN (left → toward you) ──
-  function turnBack() {
-    if (isAnimating || currentIndex <= 0) return;
-    isAnimating = true;
+  /*
+   * Open a book:
+   * 1. Clear every image belonging to the previous book.
+   * 2. Load page 1.
+   * 3. Display page 1 only after it has loaded.
+   * 4. Preload nearby pages afterwards.
+   */
+  async function openFlipbook(book) {
+    if (!book || !Array.isArray(book.pages) || book.pages.length === 0) {
+      alert("This book has no page images yet.");
+      return;
+    }
 
-    const prevIdx = currentIndex - 1;
+    const token = ++loadToken;
 
-    // Stack underneath shows the previous page (destination)
-    stackImg.src = currentPages[currentIndex];
+    // Remove blank/invalid entries but preserve page order.
+    currentPages = book.pages
+      .map(cleanUrl)
+      .filter(Boolean);
 
-    // Leaf starts "already flipped" showing the current page on the back face
-    // then sweeps back to 0° revealing the previous page on the front
-    frontImg.src = currentPages[prevIdx];
-    backImg.src  = currentPages[currentIndex];
+    if (!currentPages.length) {
+      alert("This book has no valid page image URLs.");
+      return;
+    }
 
-    // Start at −180° (flipped state), no transition
-    pageLeaf.style.transition = 'none';
-    pageLeaf.style.transform  = 'rotateY(-180deg)';
+    currentIndex = 0;
+    isAnimating = false;
 
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      pageLeaf.style.transition = 'transform 0.75s cubic-bezier(0.645, 0.045, 0.355, 1.000)';
-      pageLeaf.style.transform  = 'rotateY(0deg)';
-    }));
+    document.getElementById("modalBookTitle").textContent =
+      book.title || "Book Preview";
 
-    setTimeout(() => {
-      currentIndex = prevIdx;
-      frontImg.src = currentPages[currentIndex];
-      backImg.src  = currentPages[currentIndex + 1] || currentPages[currentIndex];
-      stackImg.src = currentPages[currentIndex];
-      updateIndicator();
-      updateNavButtons();
-      isAnimating = false;
-    }, 760);
-  }
+    document.getElementById("modalBookSub").textContent =
+      `${book.author || ""} · ${book.subject || ""}`;
 
-  // ── JUMP TO PAGE (dot click) ──
-  function jumpToPage(idx) {
-    if (idx === currentIndex || isAnimating) return;
-    const dir = idx > currentIndex ? 1 : -1;
-    currentIndex = idx;
-    // Instant swap with a quick scale pop
-    pageLeaf.style.transition = 'none';
-    pageLeaf.style.transform  = 'rotateY(0deg)';
-    frontImg.src = currentPages[currentIndex];
-    backImg.src  = currentPages[currentIndex + 1] || currentPages[currentIndex];
-    stackImg.src = currentPages[currentIndex];
-    pageLeaf.style.transition = 'transform 0.25s ease';
-    pageLeaf.style.transform  = dir > 0 ? 'rotateY(-8deg)' : 'rotateY(8deg)';
-    setTimeout(() => { pageLeaf.style.transform = 'rotateY(0deg)'; }, 250);
+    // VERY IMPORTANT: remove the previous book immediately.
+    resetLeaf();
+    clearImg(frontImg);
+    clearImg(backImg);
+    clearImg(stackImg);
+
+    buildDots();
     updateIndicator();
     updateNavButtons();
+
+    flipModal.classList.add("active");
+    document.body.style.overflow = "hidden";
+
+    showLoading();
+
+    try {
+      // Page 1 MUST be loaded before anything is shown.
+      await loadImage(currentPages[0]);
+
+      if (token !== loadToken) return;
+
+      setImg(frontImg, currentPages[0]);
+
+      // Back face is prepared only after its image is available.
+      if (currentPages[1]) {
+        await loadImage(currentPages[1]);
+      }
+
+      if (token !== loadToken) return;
+
+      setImg(
+        backImg,
+        currentPages[1] || currentPages[0]
+      );
+
+      setImg(stackImg, currentPages[0]);
+
+      hideLoading();
+
+      // Do this after the first page is visible.
+      requestAnimationFrame(() => preloadAround(currentIndex));
+
+    } catch (error) {
+      if (token !== loadToken) return;
+
+      console.error(error);
+
+      // Show a clear fallback instead of accidentally displaying
+      // a page from the previous book.
+      clearImg(frontImg);
+      clearImg(backImg);
+      clearImg(stackImg);
+
+      hideLoading();
+
+      frontImg.alt = "Unable to load this page";
+    }
+  }
+
+  /*
+   * FORWARD:
+   * Wait for the destination page BEFORE starting the 3D animation.
+   */
+  async function turnForward() {
+    if (
+      isAnimating ||
+      currentIndex >= currentPages.length - 1
+    ) {
+      return;
+    }
+
+    isAnimating = true;
+
+    const fromIndex = currentIndex;
+    const toIndex = fromIndex + 1;
+
+    showLoading();
+
+    try {
+      // Wait until the actual destination image is ready.
+      await loadImage(currentPages[toIndex]);
+
+      if (fromIndex !== currentIndex) {
+        isAnimating = false;
+        hideLoading();
+        return;
+      }
+
+      // The next page is now safe to put on the back face.
+      setImg(frontImg, currentPages[fromIndex]);
+      setImg(backImg, currentPages[toIndex]);
+      setImg(stackImg, currentPages[toIndex]);
+
+      resetLeaf();
+
+      // Start the animation on the next frame.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          pageLeaf.style.transition =
+            "transform 0.75s cubic-bezier(0.645, 0.045, 0.355, 1.000)";
+          pageLeaf.style.transform = "rotateY(-180deg)";
+        });
+      });
+
+      // Wait slightly longer than the CSS animation.
+      await new Promise(resolve => setTimeout(resolve, 780));
+
+      // Now commit the destination as the REAL current page.
+      currentIndex = toIndex;
+
+      resetLeaf();
+
+      // Do not use an old image here. Every source is explicitly set.
+      setImg(frontImg, currentPages[currentIndex]);
+
+      if (currentPages[currentIndex + 1]) {
+        // Preload but don't block the page counter.
+        preload(currentPages[currentIndex + 1]);
+        setImg(backImg, currentPages[currentIndex + 1]);
+      } else {
+        setImg(backImg, currentPages[currentIndex]);
+      }
+
+      setImg(stackImg, currentPages[currentIndex]);
+
+      updateIndicator();
+      updateNavButtons();
+      hideLoading();
+
+      preloadAround(currentIndex);
+
+    } catch (error) {
+      console.error("Next page failed:", error);
+      hideLoading();
+    } finally {
+      isAnimating = false;
+    }
+  }
+
+  /*
+   * BACKWARD:
+   * Wait for the previous page BEFORE starting the reverse animation.
+   */
+  async function turnBack() {
+    if (isAnimating || currentIndex <= 0) {
+      return;
+    }
+
+    isAnimating = true;
+
+    const fromIndex = currentIndex;
+    const toIndex = fromIndex - 1;
+
+    showLoading();
+
+    try {
+      // Wait for the actual previous page.
+      await loadImage(currentPages[toIndex]);
+
+      if (fromIndex !== currentIndex) {
+        isAnimating = false;
+        hideLoading();
+        return;
+      }
+
+      /*
+       * For reverse animation:
+       * front = destination/previous page
+       * back  = current page
+       */
+      setImg(frontImg, currentPages[toIndex]);
+      setImg(backImg, currentPages[fromIndex]);
+      setImg(stackImg, currentPages[fromIndex]);
+
+      // Start from the flipped position.
+      pageLeaf.style.transition = "none";
+      pageLeaf.style.transform = "rotateY(-180deg)";
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          pageLeaf.style.transition =
+            "transform 0.75s cubic-bezier(0.645, 0.045, 0.355, 1.000)";
+          pageLeaf.style.transform = "rotateY(0deg)";
+        });
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 780));
+
+      currentIndex = toIndex;
+
+      resetLeaf();
+
+      setImg(frontImg, currentPages[currentIndex]);
+
+      if (currentPages[currentIndex + 1]) {
+        preload(currentPages[currentIndex + 1]);
+        setImg(backImg, currentPages[currentIndex + 1]);
+      } else {
+        setImg(backImg, currentPages[currentIndex]);
+      }
+
+      setImg(stackImg, currentPages[currentIndex]);
+
+      updateIndicator();
+      updateNavButtons();
+      hideLoading();
+
+      preloadAround(currentIndex);
+
+    } catch (error) {
+      console.error("Previous page failed:", error);
+      hideLoading();
+    } finally {
+      isAnimating = false;
+    }
+  }
+
+  /*
+   * DOT NAVIGATION:
+   * Directly load the requested page and then display it.
+   * No stale page is kept on screen.
+   */
+  async function jumpToPage(index) {
+    if (
+      isAnimating ||
+      index < 0 ||
+      index >= currentPages.length ||
+      index === currentIndex
+    ) {
+      return;
+    }
+
+    const token = ++loadToken;
+    isAnimating = true;
+    showLoading();
+
+    try {
+      await loadImage(currentPages[index]);
+
+      if (token !== loadToken) {
+        isAnimating = false;
+        hideLoading();
+        return;
+      }
+
+      resetLeaf();
+
+      setImg(frontImg, currentPages[index]);
+
+      if (currentPages[index + 1]) {
+        preload(currentPages[index + 1]);
+        setImg(backImg, currentPages[index + 1]);
+      } else {
+        setImg(backImg, currentPages[index]);
+      }
+
+      setImg(stackImg, currentPages[index]);
+
+      currentIndex = index;
+
+      updateIndicator();
+      updateNavButtons();
+      hideLoading();
+
+      preloadAround(currentIndex);
+
+    } catch (error) {
+      console.error("Jump to page failed:", error);
+      hideLoading();
+    } finally {
+      isAnimating = false;
+    }
   }
 
   nextBtn.addEventListener("click", turnForward);
   prevBtn.addEventListener("click", turnBack);
-  document.getElementById("closeFlipBtn").addEventListener("click", closeModal);
-  flipModal.addEventListener("click", e => { if (e.target === flipModal) closeModal(); });
+
+  document
+    .getElementById("closeFlipBtn")
+    .addEventListener("click", closeModal);
+
+  flipModal.addEventListener("click", e => {
+    if (e.target === flipModal) {
+      closeModal();
+    }
+  });
 
   function closeModal() {
+    ++loadToken;
+    isAnimating = false;
+
     flipModal.classList.remove("active");
     document.body.style.overflow = "";
+
+    // Immediately clear the current book.
+    resetLeaf();
+    clearImg(frontImg);
+    clearImg(backImg);
+    clearImg(stackImg);
+    hideLoading();
   }
 
-  // Keyboard
+  // Keyboard navigation
   document.addEventListener("keydown", e => {
     if (!flipModal.classList.contains("active")) return;
-    if (e.key === "ArrowRight") turnForward();
-    if (e.key === "ArrowLeft")  turnBack();
-    if (e.key === "Escape")     closeModal();
+
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      turnForward();
+    }
+
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      turnBack();
+    }
+
+    if (e.key === "Escape") {
+      closeModal();
+    }
   });
 
   // Touch swipe
-  let touchStartX = 0, touchStartY = 0;
-  const flipScene = document.getElementById("flipScene");
+  let touchStartX = 0;
+  let touchStartY = 0;
+
   flipScene.addEventListener("touchstart", e => {
     touchStartX = e.changedTouches[0].screenX;
     touchStartY = e.changedTouches[0].screenY;
   }, { passive: true });
+
   flipScene.addEventListener("touchend", e => {
+    if (!flipModal.classList.contains("active")) return;
+
     const dx = e.changedTouches[0].screenX - touchStartX;
-    const dy = Math.abs(e.changedTouches[0].screenY - touchStartY);
-    if (dy > 40) return; // vertical scroll, ignore
+    const dy = Math.abs(
+      e.changedTouches[0].screenY - touchStartY
+    );
+
+    if (dy > 40) return;
+
     if (dx < -45) turnForward();
-    if (dx > 45)  turnBack();
+    if (dx > 45) turnBack();
+  }, { passive: true });
+
+  // Desktop drag
+  let dragStartX = null;
+
+  pageLeaf.addEventListener("mousedown", e => {
+    if (!flipModal.classList.contains("active")) return;
+    dragStartX = e.clientX;
   });
 
-  // Drag on the leaf itself for desktop feel
-  let dragStartX = null;
-  pageLeaf.addEventListener("mousedown", e => { dragStartX = e.clientX; });
   document.addEventListener("mouseup", e => {
-    if (dragStartX === null || !flipModal.classList.contains("active")) return;
+    if (
+      dragStartX === null ||
+      !flipModal.classList.contains("active")
+    ) {
+      return;
+    }
+
     const dx = e.clientX - dragStartX;
     dragStartX = null;
+
     if (dx < -30) turnForward();
-    if (dx > 30)  turnBack();
+    if (dx > 30) turnBack();
   });
 
   // ── SPLASH ────────────────────────────────────────────────────
-  window.addEventListener("load", () => {
-    loadBooks();
+  window.addEventListener("load", async () => {
+    await loadBooks();
+
+    const splash = document.getElementById("splash");
+    splash.style.opacity = "0";
+
     setTimeout(() => {
-      const splash = document.getElementById("splash");
-      splash.style.opacity = "0";
-      setTimeout(() => {
-        splash.style.display = "none";
-        document.getElementById("mainApp").classList.add("visible");
-      }, 800);
-    }, 2800);
+      splash.style.display = "none";
+      document.getElementById("mainApp").classList.add("visible");
+    }, 350);
   });
 </script>
 </body>
